@@ -32,8 +32,7 @@ class Program
         double average = (double)sum / numbers.Count;
         Console.WriteLine($"The average is: {average}");
 
-        // Core 3: find maximum
-        int max = int.MinValue; // start with smallest possible int
+        int max = int.MinValue;
         foreach (int number in numbers)
         {
             if (number > max)
@@ -43,8 +42,7 @@ class Program
         }
         Console.WriteLine($"The largest number is: {max}");
 
-        // --- Stretch Challenge 1: smallest positive number ---
-        int? smallestPositive = null; // nullable int to handle case where no positive numbers exist
+        int? smallestPositive = null;
         foreach (int number in numbers)
         {
             if (number > 0)
@@ -65,8 +63,7 @@ class Program
             Console.WriteLine("No positive numbers were entered.");
         }
 
-        // --- Stretch Challenge 2: sort and display sorted list ---
-        numbers.Sort(); // built-in List sort (ascending)
+        numbers.Sort(); 
         Console.WriteLine("The sorted list is:");
         foreach (int number in numbers)
         {

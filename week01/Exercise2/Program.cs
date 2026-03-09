@@ -4,12 +4,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        // --- Core Requirement: get grade percentage ---
         Console.Write("Enter your grade percentage: ");
         string input = Console.ReadLine();
         int percentage = int.Parse(input);
 
-        // --- Core Requirement: determine letter grade ---
         string letter = "";
 
         if (percentage >= 90)
@@ -33,7 +31,6 @@ class Program
             letter = "F";
         }
 
-        // --- Core Requirement: pass/fail message ---
         if (percentage >= 70)
         {
             Console.WriteLine("Congratulations, you passed the course!");
@@ -43,11 +40,10 @@ class Program
             Console.WriteLine("Don't give up! Keep working hard for next time.");
         }
 
-        // --- Stretch Challenge: determine sign (+ or -) ---
         string sign = "";
-        int lastDigit = percentage % 10;   // remainder after dividing by 10
+        int lastDigit = percentage % 10; 
 
-        if (percentage >= 60 && percentage <= 100) // only assign sign to A, B, C, D
+        if (percentage >= 60 && percentage <= 100)
         {
             if (lastDigit >= 7)
             {
