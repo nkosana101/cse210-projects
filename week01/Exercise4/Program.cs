@@ -10,7 +10,6 @@ class Program
 
         Console.WriteLine("Enter a list of numbers, type 0 when finished.");
 
-        // Core: collect numbers until 0
         do
         {
             Console.Write("Enter number: ");
@@ -23,7 +22,6 @@ class Program
 
         } while (userNumber != 0);
 
-        // Core 1: compute sum
         int sum = 0;
         foreach (int number in numbers)
         {
@@ -31,8 +29,6 @@ class Program
         }
         Console.WriteLine($"The sum is: {sum}");
 
-        // Core 2: compute average
-        // Use a double for precision
         double average = (double)sum / numbers.Count;
         Console.WriteLine($"The average is: {average}");
 
