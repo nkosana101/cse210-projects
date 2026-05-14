@@ -4,12 +4,13 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.Write("Enter your grade percentage: ");
+        // Core Requirement: Ask for grade percentage
+        Console.Write("What is your grade percentage? ");
         string input = Console.ReadLine();
         int percentage = int.Parse(input);
 
+        // Core Requirement: Determine letter grade
         string letter = "";
-
         if (percentage >= 90)
         {
             letter = "A";
@@ -31,20 +32,29 @@ class Program
             letter = "F";
         }
 
-        if (percentage >= 70)
+        // Stretch Challenge: Determine sign (+ or -)
+        string sign = "";
+        int lastDigit = percentage % 10;
+
+        // Only add sign for grades that are not exceptional cases
+        // Exceptional cases: A+ doesn't exist, F+ and F- don't exist
+        if (letter == "A")
         {
-            Console.WriteLine("Congratulations, you passed the course!");
+            // For A, only A- is possible (90-92), no A+
+            if (lastDigit < 3 && percentage >= 90 && percentage <= 92)
+            {
+                sign = "-";
+            }
+            // else no sign (including 93-100, but we also ensure no A+)
+        }
+        else if (letter == "F")
+        {
+            // No + or - for F
+            sign = "";
         }
         else
         {
-            Console.WriteLine("Don't give up! Keep working hard for next time.");
-        }
-
-        string sign = "";
-        int lastDigit = percentage % 10; 
-
-        if (percentage >= 60 && percentage <= 100)
-        {
+            // For B, C, D: + for last digit >= 7, - for last digit < 3
             if (lastDigit >= 7)
             {
                 sign = "+";
@@ -53,29 +63,20 @@ class Program
             {
                 sign = "-";
             }
-            else
-            {
-                sign = "";
-            }
+            // else no sign
         }
 
-        // --- Handle exceptional cases: no A+, no F+ or F- ---
-        if (letter == "A")
-        {
-            if (sign == "+")   // A+ doesn't exist
-            {
-                sign = "";      // change to just A
-            }
-            // A- is fine, keep sign if it's "-"
-        }
-        else if (letter == "F")
-        {
-            // F has no sign at all
-            sign = "";
-        }
+        // Display the final letter grade with sign (if any)
+        Console.WriteLine($"Your letter grade is: {letter}{sign}");
 
-        // --- Final output ---
-        // Combine letter and sign, but if sign is empty just print letter
-        Console.WriteLine($"Your grade is: {letter}{sign}");
+        // Core Requirement: Determine if the user passed (70 or above)
+        if (percentage >= 70)
+        {
+            Console.WriteLine("Congratulations, you passed the course!");
+        }
+        else
+        {
+            Console.WriteLine("Don't give up! Better luck next time.");
+        }
     }
 }

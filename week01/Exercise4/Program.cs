@@ -6,68 +6,55 @@ class Program
     static void Main(string[] args)
     {
         List<int> numbers = new List<int>();
-        int userNumber;
 
         Console.WriteLine("Enter a list of numbers, type 0 when finished.");
 
-        do
+        // Collect numbers until user enters 0 (do not add 0 to list)
+        while (true)
         {
             Console.Write("Enter number: ");
-            userNumber = int.Parse(Console.ReadLine());
+            int number = int.Parse(Console.ReadLine());
 
-            if (userNumber != 0)
-            {
-                numbers.Add(userNumber);
-            }
+            if (number == 0)
+                break;
 
-        } while (userNumber != 0);
+            numbers.Add(number);
+        }
 
+        // Core: sum, average, max
         int sum = 0;
-        foreach (int number in numbers)
-        {
-            sum += number;
-        }
-        Console.WriteLine($"The sum is: {sum}");
-
-        double average = (double)sum / numbers.Count;
-        Console.WriteLine($"The average is: {average}");
-
         int max = int.MinValue;
-        foreach (int number in numbers)
+
+        foreach (int num in numbers)
         {
-            if (number > max)
-            {
-                max = number;
-            }
+            sum += num;
+            if (num > max)
+                max = num;
         }
+
+        double average = numbers.Count > 0 ? (double)sum / numbers.Count : 0;
+
+        Console.WriteLine($"The sum is: {sum}");
+        Console.WriteLine($"The average is: {average}");
         Console.WriteLine($"The largest number is: {max}");
 
+        // Stretch 1: smallest positive number (closest to zero)
         int? smallestPositive = null;
-        foreach (int number in numbers)
+        foreach (int num in numbers)
         {
-            if (number > 0)
-            {
-                if (smallestPositive == null || number < smallestPositive)
-                {
-                    smallestPositive = number;
-                }
-            }
+            if (num > 0 && (smallestPositive == null || num < smallestPositive))
+                smallestPositive = num;
         }
 
         if (smallestPositive.HasValue)
-        {
             Console.WriteLine($"The smallest positive number is: {smallestPositive}");
-        }
         else
-        {
             Console.WriteLine("No positive numbers were entered.");
-        }
 
-        numbers.Sort(); 
+        // Stretch 2: sort and display the sorted list
+        numbers.Sort();
         Console.WriteLine("The sorted list is:");
-        foreach (int number in numbers)
-        {
-            Console.WriteLine(number);
-        }
+        foreach (int num in numbers)
+            Console.WriteLine(num);
     }
 }

@@ -9,16 +9,20 @@ class Program
 
         while (playAgain == "yes")
         {
+            // Core Requirement: Generate random magic number (1 to 100)
             int magicNumber = randomGenerator.Next(1, 101);
+            int guess = 0;
+            int guessCount = 0;   // Stretch: count guesses
 
-            int guess = -1;
-            int guessCount = 0;  
+            // Core Requirement: Loop until guess is correct
             while (guess != magicNumber)
             {
                 Console.Write("What is your guess? ");
-                guess = int.Parse(Console.ReadLine());
+                string input = Console.ReadLine();
+                guess = int.Parse(input);
                 guessCount++;
 
+                // Core Requirement: Give higher/lower feedback
                 if (guess > magicNumber)
                 {
                     Console.WriteLine("Lower");
@@ -33,10 +37,13 @@ class Program
                 }
             }
 
+            // Stretch: Display number of guesses
             Console.WriteLine($"It took you {guessCount} guesses.");
 
-            Console.Write("Do you want to play again? (yes/no) ");
-            playAgain = Console.ReadLine().ToLower();
+            // Stretch: Ask to play again
+            Console.Write("Do you want to play again? (yes/no): ");
+            playAgain = Console.ReadLine();
+            Console.WriteLine(); // blank line for readability
         }
 
         Console.WriteLine("Thanks for playing!");
