@@ -1,65 +1,80 @@
 using System;
+using System.Collections.Generic;
 
-class Program
+namespace JournalProgram
 {
-    static void Main(string[] args)
+    class Program
     {
-        Journal journal = new Journal();
-        PromptGenerator promptGenerator = new PromptGenerator();
-
-        while (true)
+        static void Main(string[] args)
         {
-            Console.WriteLine("\nPlease select one of the following choices:");
-            Console.WriteLine("1. Write");
-            Console.WriteLine("2. Display");
-            Console.WriteLine("3. Save");
-            Console.WriteLine("4. Load");
-            Console.WriteLine("5. Quit");
-            Console.Write("What would you like to do? ");
-            string choice = Console.ReadLine();
-
-            if (choice == "1")
+            Journal journal = new Journal();
+            List<string> prompts = new List<string>
             {
-                string prompt = promptGenerator.GetRandomPrompt();
-                Console.WriteLine($"\nPrompt: {prompt}");
-                Console.Write("> ");
-                string response = Console.ReadLine();
-                string date = DateTime.Now.ToShortDateString();
+                "Who was the most interesting person I interacted with today?",
+                "What was the best part of my day?",
+                "How did I see the hand of the Lord in my life today?",
+                "What was the strongest emotion I felt today?",
+                "If I had one thing I could do over today, what would it be?",
+                "What is something I learned today?" // extra prompt beyond 5
+            };
 
-                Entry newEntry = new Entry
+            Random random = new Random();
+
+            bool running = true;
+            while (running)
+            {
+                Console.WriteLine("=== Journal Menu ===");
+                Console.WriteLine("1. Write a new entry");
+                Console.WriteLine("2. Display the journal");
+                Console.WriteLine("3. Save the journal to a file");
+                Console.WriteLine("4. Load the journal from a file");
+                Console.WriteLine("5. Exit");
+                Console.Write("Choose an option: ");
+                string choice = Console.ReadLine();
+
+                switch (choice)
                 {
-                    _date = date,
-                    _promptText = prompt,
-                    _entryText = response
-                };
+                    case "1":
+                        // Write new entry
+                        string randomPrompt = prompts[random.Next(prompts.Count)];
+                        Console.WriteLine($"\nPrompt: {randomPrompt}");
+                        Console.Write("Your response: ");
+                        string response = Console.ReadLine();
+                        string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
+                        Entry newEntry = new Entry(currentDate, randomPrompt, response);
+                        journal.AddEntry(newEntry);
+                        Console.WriteLine("Entry added!\n");
+                        break;
 
-                journal.AddEntry(newEntry);
-                Console.WriteLine("Entry added.");
-            }
-            else if (choice == "2")
-            {
-                journal.DisplayAll();
-            }
-            else if (choice == "3")
-            {
-                Console.Write("Enter filename to save: ");
-                string filename = Console.ReadLine();
-                journal.SaveToFile(filename);
-            }
-            else if (choice == "4")
-            {
-                Console.Write("Enter filename to load: ");
-                string filename = Console.ReadLine();
-                journal.LoadFromFile(filename);
-            }
-            else if (choice == "5")
-            {
-                Console.WriteLine("Goodbye!");
-                break;
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice. Please try again.");
+                    case "2":
+                        // Display journal
+                        Console.WriteLine("\n=== Journal Entries ===");
+                        journal.DisplayAll();
+                        break;
+
+                    case "3":
+                        // Save to file
+                        Console.Write("Enter filename to save (e.g., journal.txt): ");
+                        string saveFile = Console.ReadLine();
+                        journal.SaveToFile(saveFile);
+                        break;
+
+                    case "4":
+                        // Load from file
+                        Console.Write("Enter filename to load: ");
+                        string loadFile = Console.ReadLine();
+                        journal.LoadFromFile(loadFile);
+                        break;
+
+                    case "5":
+                        running = false;
+                        Console.WriteLine("Goodbye!");
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid option. Try again.\n");
+                        break;
+                }
             }
         }
     }

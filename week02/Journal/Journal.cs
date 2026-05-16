@@ -2,75 +2,66 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-public class Journal
+namespace JournalProgram
 {
-    public List<Entry> _entries = new List<Entry>();
-
-    public void AddEntry(Entry newEntry)
+    public class Journal
     {
-        _entries.Add(newEntry);
-    }
+        public List<Entry> _entries = new List<Entry>();
 
-    public void DisplayAll()
-    {
-        if (_entries.Count == 0)
+        public void AddEntry(Entry newEntry)
         {
-            Console.WriteLine("The journal is empty.");
-            return;
+            _entries.Add(newEntry);
         }
 
-        foreach (Entry entry in _entries)
+        public void DisplayAll()
         {
-            entry.Display();
-        }
-    }
-
-    public void SaveToFile(string file)
-    {
-        using (StreamWriter writer = new StreamWriter(file))
-        {
+            if (_entries.Count == 0)
+            {
+                Console.WriteLine("No entries yet.\n");
+                return;
+            }
             foreach (Entry entry in _entries)
             {
-                writer.WriteLine(entry._date);
-                writer.WriteLine(entry._promptText);
-                writer.WriteLine(entry._entryText);
-                writer.WriteLine();
+                entry.Display();
             }
         }
-        Console.WriteLine($"Journal saved to {file}");
-    }
 
-    public void LoadFromFile(string file)
-    {
-        if (!File.Exists(file))
+        public void SaveToFile(string filename)
         {
-            Console.WriteLine($"File {file} does not exist.");
-            return;
-        }
-
-        _entries.Clear();
-
-        using (StreamReader reader = new StreamReader(file))
-        {
-            string line;
-            while ((line = reader.ReadLine()) != null)
+            using (StreamWriter writer = new StreamWriter(filename))
             {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                string date = line;
-                string prompt = reader.ReadLine();
-                string entryText = reader.ReadLine();
-
-                Entry entry = new Entry
+                foreach (Entry entry in _entries)
                 {
-                    _date = date,
-                    _promptText = prompt,
-                    _entryText = entryText
-                };
-                _entries.Add(entry);
+                    writer.WriteLine(entry.GetFileRepresentation());
+                }
             }
+            Console.WriteLine($"Journal saved to {filename}\n");
         }
-        Console.WriteLine($"Journal loaded from {file}");
+
+        public void LoadFromFile(string filename)
+        {
+            if (!File.Exists(filename))
+            {
+                Console.WriteLine("File not found.\n");
+                return;
+            }
+
+            List<Entry> loadedEntries = new List<Entry>();
+            string[] lines = File.ReadAllLines(filename);
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split('|');
+                if (parts.Length == 3)
+                {
+                    string date = parts[0];
+                    string prompt = parts[1];
+                    string response = parts[2];
+                    Entry entry = new Entry(date, prompt, response);
+                    loadedEntries.Add(entry);
+                }
+            }
+            _entries = loadedEntries;
+            Console.WriteLine($"Journal loaded from {filename} ({_entries.Count} entries)\n");
+        }
     }
 }
