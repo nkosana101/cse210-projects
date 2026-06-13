@@ -1,9 +1,31 @@
-using System;
-
-class Program
+namespace Shapes
 {
-    static void Main(string[] args)
+    public class Shape
     {
-        Console.WriteLine("Hello World! This is the Shapes Project.");
+        // Member variable for color
+        private string _color;
+
+        // Constructor
+        public Shape(string color)
+        {
+            _color = color;
+        }
+
+        // Getter and Setter for color
+        public string GetColor()
+        {
+            return _color;
+        }
+
+        public void SetColor(string color)
+        {
+            _color = color;
+        }
+
+        // Virtual method – can be overridden by derived classes
+        public virtual double GetArea()
+        {
+            return 0; // default, though we expect override
+        }
     }
 }
