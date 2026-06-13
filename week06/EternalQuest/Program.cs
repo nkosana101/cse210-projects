@@ -1,9 +1,20 @@
-using System;
-
-class Program
+namespace EternalQuest
 {
-    static void Main(string[] args)
+    public class EternalGoal : Goal
     {
-        Console.WriteLine("Hello World! This is the EternalQuest Project.");
+        public EternalGoal(string name, string description, int points)
+            : base(name, description, points) { }
+
+        public override int RecordEvent()
+        {
+            return _points; // Always give points, never complete
+        }
+
+        public override bool IsComplete() => false;
+
+        public override string GetStringRepresentation()
+        {
+            return $"EternalGoal:{_shortName},{_description},{_points}";
+        }
     }
 }
