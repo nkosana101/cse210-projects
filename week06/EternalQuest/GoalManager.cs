@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq; // Needed for LINQ parsing
+using System.Linq; 
 
 public class GoalManager
 {
@@ -14,7 +14,7 @@ public class GoalManager
         _score = 0;
     }
 
-    // --- NEW: Safe Integer Input Helper ---
+    
     private int GetUserInt(string prompt)
     {
         int result;
@@ -92,7 +92,7 @@ public class GoalManager
     {
         Console.Clear();
         
-        // Guard against empty list
+        
         if (_goals.Count == 0)
         {
             Console.WriteLine("You haven't created any goals yet!");
@@ -103,7 +103,7 @@ public class GoalManager
 
         int index = GetUserInt("\nSelect Goal: ") - 1;
 
-        // Guard against out-of-range selection
+        
         if (index < 0 || index >= _goals.Count)
         {
             Console.WriteLine("Invalid selection.");
@@ -117,15 +117,15 @@ public class GoalManager
         Console.WriteLine($"🎯 Your new total score is: {_score}\n");
     }
 
-    // --- NEW: Save Goals to File ---
+
     public void SaveGoals(string filename)
     {
         using (StreamWriter writer = new StreamWriter(filename))
         {
-            // First line: Total score
+        
             writer.WriteLine(_score);
 
-            // Each subsequent line: the goal's serialized representation
+        
             foreach (Goal goal in _goals)
             {
                 writer.WriteLine(goal.GetStringRepresentation());
@@ -134,7 +134,7 @@ public class GoalManager
         Console.WriteLine($"✅ Goals saved successfully to {filename}!");
     }
 
-    // --- NEW: Load Goals from File ---
+    
     public void LoadGoals(string filename)
     {
         if (!File.Exists(filename))
@@ -145,10 +145,10 @@ public class GoalManager
 
         using (StreamReader reader = new StreamReader(filename))
         {
-            // Read the score
+        
             _score = int.Parse(reader.ReadLine());
 
-            // Read all goal lines
+        
             string line;
             while ((line = reader.ReadLine()) != null)
             {
@@ -162,7 +162,7 @@ public class GoalManager
         Console.WriteLine($"✅ Goals loaded successfully from {filename}!");
     }
 
-    // --- Helper Factory Method for Loading ---
+
     private Goal CreateGoalFromString(string line)
     {
         string[] parts = line.Split('|');
@@ -170,7 +170,7 @@ public class GoalManager
         switch (parts[0])
         {
             case "SimpleGoal":
-                // Format: SimpleGoal|Name|Description|Points|IsComplete
+        
                 return new SimpleGoal(
                     parts[1],                    // Name
                     parts[2],                    // Description
@@ -179,7 +179,7 @@ public class GoalManager
                 );
 
             case "EternalGoal":
-                // Format: EternalGoal|Name|Description|Points
+            
                 return new EternalGoal(
                     parts[1],                    // Name
                     parts[2],                    // Description
@@ -187,7 +187,7 @@ public class GoalManager
                 );
 
             case "ChecklistGoal":
-                // Format: ChecklistGoal|Name|Description|Points|Bonus|Target|AmountCompleted
+            
                 return new ChecklistGoal(
                     parts[1],                    // Name
                     parts[2],                    // Description

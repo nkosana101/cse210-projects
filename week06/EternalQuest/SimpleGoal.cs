@@ -1,8 +1,6 @@
 using System;
 
-/// <summary>
-/// Represents a goal that is completed after a single event.
-/// </summary>
+
 public class SimpleGoal : Goal
 {
     private bool _isComplete;
@@ -18,7 +16,7 @@ public class SimpleGoal : Goal
         if (!_isComplete)
         {
             _isComplete = true;
-            return Points;   // using base property
+            return Points;   
         }
         return 0;
     }
@@ -30,5 +28,5 @@ public class SimpleGoal : Goal
         return $"SimpleGoal|{Name}|{Description}|{Points}|{_isComplete}";
     }
 
-    // GetDetailsString() is inherited from base class – no override needed.
+    
 }

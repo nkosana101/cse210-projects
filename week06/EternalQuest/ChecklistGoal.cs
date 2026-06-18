@@ -1,9 +1,6 @@
 using System;
 
-/// <summary>
-/// Represents a goal that must be accomplished a set number of times.
-/// Awards standard points each time, plus a bonus points when the target is reached.
-/// </summary>
+
 public class ChecklistGoal : Goal
 {
     private int _amountCompleted;
@@ -20,14 +17,14 @@ public class ChecklistGoal : Goal
 
     public override int RecordEvent()
     {
-        // Guard clause: if already complete, no points are awarded.
+        
         if (_amountCompleted >= _target)
             return 0;
 
-        // Record the progress.
+        
         _amountCompleted++;
 
-        // If we just hit the target, award points + bonus. Otherwise, award standard points.
+    
         return _amountCompleted == _target ? Points + _bonus : Points;
     }
 
