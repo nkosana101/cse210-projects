@@ -1,3 +1,8 @@
+using System;
+
+/// <summary>
+/// Represents a goal that is completed after a single event.
+/// </summary>
 public class SimpleGoal : Goal
 {
     private bool _isComplete;
@@ -13,25 +18,17 @@ public class SimpleGoal : Goal
         if (!_isComplete)
         {
             _isComplete = true;
-            return _points;
+            return Points;   // using base property
         }
-
         return 0;
     }
 
-    public override bool IsComplete()
-    {
-        return _isComplete;
-    }
+    public override bool IsComplete() => _isComplete;
 
     public override string GetStringRepresentation()
     {
-        return $"SimpleGoal|{_shortName}|{_description}|{_points}|{_isComplete}";
+        return $"SimpleGoal|{Name}|{Description}|{Points}|{_isComplete}";
     }
 
-    public override string GetDetailsString()
-    {
-        string status = _isComplete ? "[X]" : "[ ]";
-        return $"{status} {_shortName} ({_description})";
-    }
+    // GetDetailsString() is inherited from base class – no override needed.
 }

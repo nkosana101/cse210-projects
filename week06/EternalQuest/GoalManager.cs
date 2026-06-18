@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq; // Needed for LINQ parsing
 
 public class GoalManager
 {
@@ -13,6 +14,18 @@ public class GoalManager
         _score = 0;
     }
 
+    // --- NEW: Safe Integer Input Helper ---
+    private int GetUserInt(string prompt)
+    {
+        int result;
+        Console.Write(prompt);
+        while (!int.TryParse(Console.ReadLine(), out result))
+        {
+            Console.Write("Invalid input. Please enter a valid number: ");
+        }
+        return result;
+    }
+
     public void DisplayPlayerInfo()
     {
         Console.WriteLine($"\nYou have {_score} points.\n");
@@ -21,6 +34,11 @@ public class GoalManager
     public void ListGoalDetails()
     {
         Console.WriteLine("\nGoals:");
+        if (_goals.Count == 0)
+        {
+            Console.WriteLine("  (No goals created yet.)");
+            return;
+        }
 
         for (int i = 0; i < _goals.Count; i++)
         {
@@ -30,11 +48,13 @@ public class GoalManager
 
     public void CreateGoal()
     {
+        Console.Clear();
+        Console.WriteLine("Select Goal Type:");
         Console.WriteLine("1. Simple Goal");
         Console.WriteLine("2. Eternal Goal");
         Console.WriteLine("3. Checklist Goal");
 
-        int choice = int.Parse(Console.ReadLine());
+        int choice = GetUserInt("Choice: ");
 
         Console.Write("Name: ");
         string name = Console.ReadLine();
@@ -42,8 +62,7 @@ public class GoalManager
         Console.Write("Description: ");
         string desc = Console.ReadLine();
 
-        Console.Write("Points: ");
-        int points = int.Parse(Console.ReadLine());
+        int points = GetUserInt("Points: ");
 
         switch (choice)
         {
@@ -56,34 +75,130 @@ public class GoalManager
                 break;
 
             case 3:
-                Console.Write("Target Count: ");
-                int target = int.Parse(Console.ReadLine());
-
-                Console.Write("Bonus Points: ");
-                int bonus = int.Parse(Console.ReadLine());
-
-                _goals.Add(
-                    new ChecklistGoal(
-                        name,
-                        desc,
-                        points,
-                        target,
-                        bonus));
+                int target = GetUserInt("Target Count: ");
+                int bonus = GetUserInt("Bonus Points: ");
+                _goals.Add(new ChecklistGoal(name, desc, points, target, bonus));
                 break;
+
+            default:
+                Console.WriteLine("Invalid choice. Goal not created.");
+                return;
         }
+
+        Console.WriteLine($"\n✅ Goal '{name}' created successfully!\n");
     }
 
     public void RecordEvent()
     {
+        Console.Clear();
+        
+        // Guard against empty list
+        if (_goals.Count == 0)
+        {
+            Console.WriteLine("You haven't created any goals yet!");
+            return;
+        }
+
         ListGoalDetails();
 
-        Console.Write("Select Goal: ");
-        int index = int.Parse(Console.ReadLine()) - 1;
+        int index = GetUserInt("\nSelect Goal: ") - 1;
+
+        // Guard against out-of-range selection
+        if (index < 0 || index >= _goals.Count)
+        {
+            Console.WriteLine("Invalid selection.");
+            return;
+        }
 
         int earned = _goals[index].RecordEvent();
-
         _score += earned;
 
-        Console.WriteLine($"You earned {earned} points!");
+        Console.WriteLine($"\n✅ You earned {earned} points!");
+        Console.WriteLine($"🎯 Your new total score is: {_score}\n");
+    }
+
+    // --- NEW: Save Goals to File ---
+    public void SaveGoals(string filename)
+    {
+        using (StreamWriter writer = new StreamWriter(filename))
+        {
+            // First line: Total score
+            writer.WriteLine(_score);
+
+            // Each subsequent line: the goal's serialized representation
+            foreach (Goal goal in _goals)
+            {
+                writer.WriteLine(goal.GetStringRepresentation());
+            }
+        }
+        Console.WriteLine($"✅ Goals saved successfully to {filename}!");
+    }
+
+    // --- NEW: Load Goals from File ---
+    public void LoadGoals(string filename)
+    {
+        if (!File.Exists(filename))
+        {
+            Console.WriteLine($"❌ File {filename} not found. Starting with empty goals.");
+            return;
+        }
+
+        using (StreamReader reader = new StreamReader(filename))
+        {
+            // Read the score
+            _score = int.Parse(reader.ReadLine());
+
+            // Read all goal lines
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                Goal goal = CreateGoalFromString(line);
+                if (goal != null)
+                {
+                    _goals.Add(goal);
+                }
+            }
+        }
+        Console.WriteLine($"✅ Goals loaded successfully from {filename}!");
+    }
+
+    // --- Helper Factory Method for Loading ---
+    private Goal CreateGoalFromString(string line)
+    {
+        string[] parts = line.Split('|');
+
+        switch (parts[0])
+        {
+            case "SimpleGoal":
+                // Format: SimpleGoal|Name|Description|Points|IsComplete
+                return new SimpleGoal(
+                    parts[1],                    // Name
+                    parts[2],                    // Description
+                    int.Parse(parts[3]),         // Points
+                    bool.Parse(parts[4])         // IsComplete
+                );
+
+            case "EternalGoal":
+                // Format: EternalGoal|Name|Description|Points
+                return new EternalGoal(
+                    parts[1],                    // Name
+                    parts[2],                    // Description
+                    int.Parse(parts[3])          // Points
+                );
+
+            case "ChecklistGoal":
+                // Format: ChecklistGoal|Name|Description|Points|Bonus|Target|AmountCompleted
+                return new ChecklistGoal(
+                    parts[1],                    // Name
+                    parts[2],                    // Description
+                    int.Parse(parts[3]),         // Points
+                    int.Parse(parts[5]),         // Target (index 5)
+                    int.Parse(parts[4]),         // Bonus (index 4)
+                    int.Parse(parts[6])          // AmountCompleted (index 6)
+                );
+
+            default:
+                return null;
+        }
     }
 }
