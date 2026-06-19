@@ -4,13 +4,13 @@ namespace ExerciseTracking
     {
         private double _distance; // in km (private)
 
-        // Constructor: passes date/minutes to the BASE, and keeps distance here
+        
         public Running(DateTime date, int minutes, double distance) : base(date, minutes)
         {
             _distance = distance;
         }
 
-        // Override the math using the formulas from the spec
+        
         public override double GetDistance()
         {
             return _distance;
